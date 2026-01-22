@@ -32,7 +32,8 @@ def fetch_verified_tokens():
         # Sort by market cap descending
         tokens_50m.sort(key=lambda x: x['mcap'], reverse=True)
 
-        return tokens_50m
+        # Return only top 150 tokens
+        return tokens_50m[:150]
 
     except Exception as e:
         print(f"Error fetching tokens: {e}")
