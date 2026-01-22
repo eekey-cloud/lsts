@@ -32,6 +32,10 @@ jobs:
         run: |
           python stables.py
 
+      - name: Run >50M tokens script
+        run: |
+          python ">50M.py"
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -41,4 +45,6 @@ jobs:
             lst_tokens_output.csv
             stablecoin_output.json
             stablecoin_output.csv
+            tokens_50m_output.json
+            tokens_50m_output.csv
           retention-days: 30
