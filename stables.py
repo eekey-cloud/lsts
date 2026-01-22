@@ -3,64 +3,54 @@ import json
 import csv
 import io
 
-# Stablecoin token addresses with their symbols
-STABLECOINS = [
-    {'address': 'CASHx9KJUStyftLFWGvEVf59SGeG9sh5FfcnZMVPCASH', 'symbol': 'CASH'},
-    {'address': '6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG', 'symbol': 'USX'},
-    {'address': '3ThdFZQKM6kRyVGLG48kaPg5TRMhYMKY1iCRa9xop1WC', 'symbol': 'eUSX'},
-    {'address': 'USD1ttGY1N17NEEHLmELoaybftRBUSErhqYiQzvEmuB', 'symbol': 'USD1'},
-    {'address': '5YMkXAYccHSGnHn9nob9xEvv6Pvka9DZWH7nTbotTu9E', 'symbol': 'hyUSD'},
-    {'address': 'AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj', 'symbol': 'syrupUSDC'},
-    {'address': 'AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9', 'symbol': 'AUSD'},
-    {'address': 'GyWgeqpy5GueU2YbkE8xqUeVEokCMMCEeUrfbtMw6phr', 'symbol': 'BUIDL'},
-    {'address': '2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH', 'symbol': 'USDG'},
-    {'address': '9fvHrYNw1A8Evpcj7X2yy4k4fT7nNHcA9L6UsamNHAif', 'symbol': 'jlUSDG'},
-    {'address': 'susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X', 'symbol': 'sUSD'},
-    {'address': 'USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA', 'symbol': 'USDS'},
-    {'address': 'j14XLJZSVMcUYpAfajdZRpnfHUpJieZHS4aPektLWvh', 'symbol': 'jlUSDS'},
-    {'address': 'A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6', 'symbol': 'USDY'},
-    {'address': 'DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT', 'symbol': 'USDe'},
-    {'address': 'Eh6XEPhSwoLv5wFApukmnaVSHQ6sAnoD9BmgmwQoN2sN', 'symbol': 'sUSDe'},
-    {'address': 'HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr', 'symbol': 'EURC'},
-    {'address': '2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo', 'symbol': 'pyUSD'},
-    {'address': '9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u', 'symbol': 'FDUSD'},
-    {'address': 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB', 'symbol': 'USDT'},
-    {'address': 'Cmn4v2wipYV41dkakDvCgFJpxhtaaKt11NyWV8pjSE8A', 'symbol': 'jlUSDT'},
-    {'address': 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', 'symbol': 'USDC'},
-    {'address': '9BEcn9aPEmhSPbPQeFGjidRiEKki46fVQDyPpSQXPA2D', 'symbol': 'jlUSDC'},
-    {'address': 'JuprjznTrTSp2UFa3ZBUFgwdAmtZCq4MQCwysN55USD', 'symbol': 'JupUSDC'},
-    {'address': 'HVbpJAQGNpkgBaYBZQBR1t7yFdvaYVp2vCQQfKKEN4tM', 'symbol': 'USDP'},
-    {'address': 'USDH1SM1ojwWUga67PGrgFWUHibbjqMvuMaDkRJTgkX', 'symbol': 'USDH'},
-    {'address': 'GzX1ireZDU865FiMaKrdVB1H6AE8LAqWYCg6chrMrfBw', 'symbol': 'frxUSD'},
-    {'address': 'Ex5DaKYMCN6QWFA4n67TmMwsH8MJV68RX6YXTmVM532C', 'symbol': 'USDv'},
-    {'address': '5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1', 'symbol': 'VGBP'}, 
-    {'address': 'GcV9tEj62VncGithz4o4N9x6HWXARxuRgEAYk9zahNA8', 'symbol': 'jlEURC'}, 
-    {'address': 'usd63SVWcKqLeyNHpmVhZGYAqfE5RHE8jwqjRA2ida2', 'symbol': 'USDC+'},
-    {'address': 'A9mUU4qviSctJVPJdBJWkb28deg915LYJKrzQ19ji3FM', 'symbol': 'USDC(Wormhole)'},
-    {'address': 'Dn4noZ5jgGfkntzcQSUZ8czkreiZ1ForXYoV2H8Dm7S1', 'symbol': 'USDT(Wormhole)'},
-    {'address': 'DUSDt4AeLZHWYmcXnVGYdgAzjtzU5mXUVnTMdnSzAttM', 'symbol': 'DUSD'},
-    {'address': '9ckR7pPPvyPadACDTzLwK2ZAEeUJ3qGSnzPs8bVaHrSy', 'symbol': 'USDu'},  
-]
+def fetch_verified_tokens():
+    """
+    Fetch verified tokens from Jupiter API and filter by mcap > 50M
+    """
+    url = "https://lite-api.jup.ag/tokens/v2/tag?query=verified"
 
-def get_stablecoin_data():
-    """
-    Return the hardcoded stablecoin list
-    """
-    return STABLECOINS
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        tokens = response.json()
 
-def convert_to_csv(stablecoin_data):
+        tokens_50m = []
+
+        for token in tokens:
+            mcap = token.get('mcap', 0)
+
+            # Filter tokens with market cap > 50 million
+            if mcap and mcap > 50000000:
+                token_info = {
+                    'address': token.get('id', 'N/A'),
+                    'symbol': token.get('symbol', 'N/A'),
+                    'mcap': int(mcap) if isinstance(mcap, (int, float)) else 0
+                }
+                tokens_50m.append(token_info)
+                print(f"Found: {token_info['symbol']} - ${mcap:,.0f}")
+
+        # Sort by market cap descending
+        tokens_50m.sort(key=lambda x: x['mcap'], reverse=True)
+
+        return tokens_50m
+
+    except Exception as e:
+        print(f"Error fetching tokens: {e}")
+        return []
+
+def convert_to_csv(tokens_data):
     """
-    Convert list of stablecoins to CSV format string
+    Convert list of tokens to CSV format string
     """
-    if not stablecoin_data:
+    if not tokens_data:
         return None
 
     output = io.StringIO()
-    fieldnames = ['address', 'symbol']
+    fieldnames = ['address', 'symbol', 'mcap']
     writer = csv.DictWriter(output, fieldnames=fieldnames)
 
     writer.writeheader()
-    for token in stablecoin_data:
+    for token in tokens_data:
         writer.writerow(token)
 
     csv_data = output.getvalue()
@@ -76,8 +66,8 @@ def upload_to_dune(csv_data, api_key):
 
     payload = {
         "data": csv_data,
-        "description": "Stablecoin tokens data from Jupiter API",
-        "table_name": "stablecoin_tokens",
+        "description": "Verified tokens with >50M market cap from Jupiter API",
+        "table_name": "tokens_50m",
         "is_private": False
     }
 
@@ -99,28 +89,27 @@ def upload_to_dune(csv_data, api_key):
         return False
 
 def main():
-    # Get stablecoin data
-    stablecoin_data = get_stablecoin_data()
+    # Fetch verified tokens with mcap > 50M
+    tokens_data = fetch_verified_tokens()
 
-    if not stablecoin_data:
-        print("No stablecoin data found.")
+    if not tokens_data:
+        print("No tokens found with mcap > 50M.")
         return
 
     # Save as JSON for reference
-    with open('stablecoin_output.json', 'w') as f:
-        json.dump(stablecoin_data, f, indent=2)
+    with open('tokens_50m_output.json', 'w') as f:
+        json.dump(tokens_data, f, indent=2)
 
-    print(f"Found {len(stablecoin_data)} stablecoins")
-    print(json.dumps(stablecoin_data, indent=2))
+    print(f"\nFound {len(tokens_data)} verified tokens with >$50M market cap")
 
     # Convert to CSV
-    csv_data = convert_to_csv(stablecoin_data)
+    csv_data = convert_to_csv(tokens_data)
 
     if csv_data:
         # Save CSV locally for reference
-        with open('stablecoin_output.csv', 'w') as f:
+        with open('tokens_50m_output.csv', 'w') as f:
             f.write(csv_data)
-        print("\nCSV file created successfully")
+        print("CSV file created successfully")
 
         # Upload to Dune
         api_key = 'l2izTVbLIk5N5QRS4UQRNC0UdvmXDXTh'
