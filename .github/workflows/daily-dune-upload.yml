@@ -1,4 +1,4 @@
-name: Weekly LST Tokens Upload to Dune
+name: Weekly Categorised Tokens Upload to Dune
 
 on:
   schedule:
