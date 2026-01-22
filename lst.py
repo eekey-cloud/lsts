@@ -19,13 +19,23 @@ def fetch_lst_tokens():
 
         for token in tokens:
             if 'tags' in token and 'lst' in token.get('tags', []):
+                mcap = token.get('mcap', 0)
                 token_info = {
                     'address': token.get('id', 'N/A'),
-                    'symbol': token.get('symbol', 'N/A')
+                    'symbol': token.get('symbol', 'N/A'),
+                    'mcap': mcap if mcap else 0
                 }
                 lst_tokens.append(token_info)
 
-        return lst_tokens
+        # Sort by market cap descending and return top 150
+        lst_tokens.sort(key=lambda x: x['mcap'], reverse=True)
+        top_150 = lst_tokens[:150]
+
+        # Remove mcap from final output
+        for token in top_150:
+            del token['mcap']
+
+        return top_150
 
     except Exception as e:
         print(f"Error fetching tokens: {e}")
