@@ -2,8 +2,8 @@ name: Weekly Categorised Tokens Upload to Dune
 
 on:
   schedule:
-    # Run weekly on Monday at 12:00 AM UTC
-    - cron: '0 0 * * 1'
+    # Run every alternate day at 12:00 AM UTC
+    - cron: '0 0 */2 * *'
   workflow_dispatch:  # Allow manual trigger
 
 jobs:
